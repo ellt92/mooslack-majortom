@@ -5,9 +5,12 @@ var app = express();
 
 var gitlab_url = 'http://gitlab.office.moo.com';
 
+var my_client_id;
+var my_secret_id;
+
 app.get('/gitlab_login', function(req, res) {
     var oauth = {
-        client_id: '82128cc92191ea69f6ad2287faeb152b29561d460223b5920542e7feb7d3b2c2',
+        client_id: my_client_id,
         redirect_uri: 'http://localhost:34560/callback',
         response_type: 'code'
     };
@@ -18,8 +21,8 @@ app.get('/callback', function(req, res) {
     var oauth = {
         url: gitlab_url + '/oauth/token',
         form: {
-            client_id: '82128cc92191ea69f6ad2287faeb152b29561d460223b5920542e7feb7d3b2c2',
-            client_secret: '1b4942df6696983d5feb61e979e304a720e4d9d80c40e5930d0a2b7bf8ff322a',
+            client_id: my_client_id,
+            client_secret: my_secret_id,
             code: req.query.code,
             grant_type: 'authorization_code',
             redirect_uri: 'http://localhost:34560/callback'
@@ -34,6 +37,10 @@ app.get('/callback', function(req, res) {
 
 //finally start the application
 var server = app.listen(34560, function() {
+
+    my_client_id = process.argv[2];
+    my_secret_id = process.argv[3];
+
     var host = server.address().address;
     var port = server.address().port;
     console.log('Example app listening at http://%s:%s', host, port);
